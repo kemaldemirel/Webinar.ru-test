@@ -28,6 +28,12 @@ export const TodoItemsContextProvider = ({ children }: { children?: ReactNode })
   const [state, dispatch] = useReducer(todoItemsReducer, defaultState);
 
   useEffect(() => {
+    window.addEventListener('storage', () => {
+      const savedState = localStorage.getItem(localStorageKey);
+      if (savedState) {
+        dispatch({ type: 'loadState', data: JSON.parse(savedState) });
+      }
+    });
     const savedState = localStorage.getItem(localStorageKey);
 
     if (savedState) {
