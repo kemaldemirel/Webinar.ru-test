@@ -5,7 +5,7 @@ export interface TodoItem {
   title: string;
   details?: string;
   done: boolean;
-  todoItem: object;
+  todoEditValue: object;
 }
 
 interface TodoItemsState {
@@ -21,7 +21,7 @@ const TodoItemsContext = createContext<
   (TodoItemsState & { dispatch: (action: TodoItemsAction) => void }) | null
 >(null);
 
-const defaultState = { todoItems: [] };
+const defaultState: TodoItemsState = { todoItems: [] };
 const localStorageKey = 'todoListState';
 
 export const TodoItemsContextProvider = ({ children }: { children?: ReactNode }) => {
@@ -62,7 +62,7 @@ export const useTodoItems = () => {
   return todoItemsContext;
 };
 
-function todoItemsReducer(state: TodoItemsState, action: TodoItemsAction) {
+function todoItemsReducer(state: TodoItemsState, action: TodoItemsAction): TodoItemsState {
   switch (action.type) {
     case 'loadState': {
       return action.data;
@@ -78,8 +78,8 @@ function todoItemsReducer(state: TodoItemsState, action: TodoItemsAction) {
         todoItems: state.todoItems.filter(({ id }) => id !== action.data.id),
       };
     case 'edit':
-      const { id, title, details } = action.data.todoItem;
-      const itemEdit = state.todoItems.find(({ id }) => id === action.data.id);
+      const { title, details } = action.data.todoEditValue;
+      const itemEdit = state.todoItems.find(({ id }) => id === action.data.id) as TodoItem;
       return {
         ...state,
         todoItems: [

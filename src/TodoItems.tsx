@@ -72,7 +72,7 @@ const useTodoItemCardStyles = makeStyles({
 
 export const TodoItemCard = function ({ item }: { item: TodoItem }) {
   const [isEditable, setEditable] = React.useState(false);
-  const { control, handleSubmit, reset } = useForm();
+  const { control, handleSubmit } = useForm();
 
   const classes = useTodoItemCardStyles();
   const { dispatch } = useTodoItems();
@@ -91,6 +91,11 @@ export const TodoItemCard = function ({ item }: { item: TodoItem }) {
     [item.id, dispatch],
   );
 
+  const onSubmitEdit = (formData: object) => {
+    dispatch({ type: 'edit', data: { id: item.id, todoEditValue: formData } });
+    setEditable(false);
+  };
+
   return (
     <Card
       className={classnames(classes.root, {
@@ -100,12 +105,7 @@ export const TodoItemCard = function ({ item }: { item: TodoItem }) {
         action={
           <>
             {isEditable ? (
-              <IconButton
-                aria-label="change"
-                onClick={handleSubmit((formData) => {
-                  dispatch({ type: 'edit', data: { id: item.id, todoItem: formData } });
-                  setEditable(false);
-                })}>
+              <IconButton aria-label="change" onClick={handleSubmit(onSubmitEdit)}>
                 <DoneIcon />
               </IconButton>
             ) : (
@@ -121,11 +121,7 @@ export const TodoItemCard = function ({ item }: { item: TodoItem }) {
         }
         title={
           isEditable ? (
-            <form
-              onSubmit={handleSubmit((formData) => {
-                dispatch({ type: 'edit', data: { id: item.id, todoItem: formData } });
-                setEditable(false);
-              })}>
+            <form onSubmit={handleSubmit(onSubmitEdit)}>
               <Controller
                 name="title"
                 control={control}
